@@ -19,10 +19,10 @@ install:
 
 before_deploy:
   - cargo build --release --target $TARGET
-  - cp target/${TARGET}/release/thermal-vision thermal-vision-${TARGET}
+  - cp target/${TARGET}/release/thermal-vision thermal-vision-${TRAVIS_TAG}-${TARGET}
       
 deploy:
-  file: thermal-vision-${TARGET}
+  file: thermal-vision-${TRAVIS_TAG}-${TARGET}
 
   on:
     tags: true
