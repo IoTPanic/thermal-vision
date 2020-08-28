@@ -109,6 +109,31 @@ fn read(filename: &String, line_num: i32) -> ([[f32; 8]; 8], bool) {
     return (result, false);
 }
 
+fn getRange(filename: &String) -> (f32, f32) {
+    let (mut s, mut l) = (10000.0, 0.0);
+
+    let mut line = 0;
+    while line<99999 { 
+        let (values, succ) = read(filename, line);
+        if !succ {
+            break;
+        }
+        for y in 0..8 {
+            for x in 0..8 {
+                if values[y][x] > l {
+                    l = values[y][x];
+                }
+                if values[y][x] < s {
+                    s = values[y][x];
+                }
+            }
+        }
+        line += 1;
+    }
+
+    return (s, l);
+}
+
 fn main() {
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
@@ -139,6 +164,7 @@ fn main() {
 
     let mut vals = [[0.0; 8]; 8];
 
+    println!("{:#?}", getRange(filename));
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
@@ -149,6 +175,6 @@ fn main() {
             app.update(&args, filename, &mut vals);
         }
     }
-    
+
     println!("Ran {} frames", app.line);
 }
