@@ -36,15 +36,15 @@ impl App {
             for value_y in 0..8 {
                 x = 0.0;
                 for value_x in 0..8 {
-                    let square = rectangle::square(0.0, 0.0, args.window_size[0] / 8.0);
+                    //let square = rectangle::square(0.0, 0.0, args.window_size[0] / 8.0);
                     let trans = c.transform.trans(
                         (args.window_size[0] / 8.0) * x,
                         (args.window_size[1] / 8.0) * y,
                     );
 
                     let color = [values[value_y][value_x], 0.0, 0.0, 1.0];
-
-                    rectangle(color, square, trans, gl);
+                    let s = [0.0, 0.0, args.window_size[0] / 8.0, args.window_size[1] / 8.0];
+                    rectangle(color, s, trans, gl);
                     x += 1.0;
                 }
                 y += 1.0;
@@ -57,13 +57,12 @@ impl App {
         
         if self.last_updated >= 0.5{
             self.last_updated = 0.0;
-            println!("Update!");
             let (cv, r) = read(filename, self.line);
             if !r{
+                println!("Ran {} frames", self.line);
                 std::process::exit(0);
                 return;
             }
-            println!("Read line {}",self.line);
             self.line += 1;
             
             for y in 0..8{
@@ -150,4 +149,6 @@ fn main() {
             app.update(&args, filename, &mut vals);
         }
     }
+    
+    println!("Ran {} frames", app.line);
 }
