@@ -1,21 +1,26 @@
 rust: stable
 language: rust
+
 script:
-- cargo build
-- cargo test
+  - cargo build 
+  - cargo test 
+
 matrix:
   include:
-  - os: linux
-    env: TARGET=i686-unknown-linux-musl
-  - os: linux
-    env: TARGET=x86_64-unknown-linux-musl
-  - os: osx
-    env: TARGET=x86_64-apple-darwin
+    - os: linux
+      env: TARGET=i686-unknown-linux-musl
+    - os: linux
+      env: TARGET=x86_64-unknown-linux-musl
+    - os: osx
+      env: TARGET=x86_64-apple-darwin
+
 install:
-- rustup target add $TARGET
+  - rustup target add $TARGET
+
 before_deploy:
-- cargo build --release --target $TARGET
-- cp target/${TARGET}/release/thermal-vision thermal-vision-${TRAVIS_TAG}-${TARGET}
+  - cargo build --release --target $TARGET
+  - cp target/${TARGET}/release/thermal-vision thermal-vision-${TRAVIS_TAG}-${TARGET}
+  
 deploy:
   provider: releases
   api_key:
@@ -23,7 +28,7 @@ deploy:
   file: thermal-vision-${TRAVIS_TAG}-${TARGET}
   on:
     repo: IoTPanic/thermal-vision
-  skip_cleanup: 'true'
+  skip_cleanup: true
 branches:
   only:
   - master
