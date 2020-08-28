@@ -1,0 +1,43 @@
+rust: stable
+language: rust
+
+script:
+  - cargo build 
+  - cargo test 
+
+matrix:
+  include:
+    - os: linux
+      env: TARGET=i686-unknown-linux-musl
+    - os: linux
+      env: TARGET=x86_64-unknown-linux-musl
+    - os: osx
+      env: TARGET=x86_64-apple-darwin
+
+install:
+  - rustup target add $TARGET
+
+before_deploy:
+  - cargo build --release --target $TARGET
+  - cp target/${TARGET}/release/thermal-vision thermal-vision-${TARGET}
+      
+deploy:
+  file: thermal-vision-${TARGET}
+
+  on:
+    tags: true
+
+  provider: releases
+  skip_cleanup: true
+  
+branches:
+  only:
+    # Pushes and PR to the master branch
+    - master
+    # Ruby regex to match tags.
+    # Required, or travis won't trigger deploys when a new tag is pushed.
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+    
+notifications:
+  email:
+    on_success: never
