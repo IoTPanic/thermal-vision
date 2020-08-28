@@ -1,43 +1,33 @@
 rust: stable
 language: rust
-
 script:
-  - cargo build 
-  - cargo test 
-
+- cargo build
+- cargo test
 matrix:
   include:
-    - os: linux
-      env: TARGET=i686-unknown-linux-musl
-    - os: linux
-      env: TARGET=x86_64-unknown-linux-musl
-    - os: osx
-      env: TARGET=x86_64-apple-darwin
-
+  - os: linux
+    env: TARGET=i686-unknown-linux-musl
+  - os: linux
+    env: TARGET=x86_64-unknown-linux-musl
+  - os: osx
+    env: TARGET=x86_64-apple-darwin
 install:
-  - rustup target add $TARGET
-
+- rustup target add $TARGET
 before_deploy:
-  - cargo build --release --target $TARGET
-  - cp target/${TARGET}/release/thermal-vision thermal-vision-${TRAVIS_TAG}-${TARGET}
-      
+- cargo build --release --target $TARGET
+- cp target/${TARGET}/release/thermal-vision thermal-vision-${TRAVIS_TAG}-${TARGET}
 deploy:
-  file: thermal-vision-${TRAVIS_TAG}-${TARGET}
-
-  on:
-    tags: true
-
   provider: releases
-  skip_cleanup: true
-  
+  api_key:
+    secure: ONnSu2YNc/+eHc+89baR/wkaoNwv3iJxoPp/m0s0V0xRESwvmQ8fNQwUPFIBxSkP8oDnJynQmFg2WFWizdrQwNwBwOIOq1epQCKN2WbPhHA7x4yYuRnzWhaIIXbTZwgjq9PtsVz4fsW5viUjVeQH3GcWXlg7UkP4Jdhphh+ql+i/m4So/P8+Q7C9A5DQpqQFdHPjpAylBj2jBF/CHw3YAv9WftLBalr1eoXwdH98S4rJnDaIYHzmUU/hFmXUB5HTl1KHD2rV8Z8AnFSAH5J9ZNefgjOltQKHSxo/nI5Aw+tDlg0GPIzA3C8OPTZ2imhceDijnAq7mZsJNb5xMG23HnVlIrlOCm5BG5qpSXhboX1n8GT2KX/t4XHjGaT9SQwTkXGCXXknPzou8rDszGWoU4nBkJNfsI0lMzzX7O/KzDOdU1a294ejvTA+NllsfaWyisFog9x99v4GCsH6yppnmLfMKV6V9FA+8//xz534nNgFzTYZGx5uWEUHZzmsmhcBC0qC0gx1zq7k6A+WhtUH5vpFtHvuJ3atWNDYLTlfu8KQF80hcoW4pREPNBAs6oROD1PRfaG0FgTefwa8aP6x4OTsdH1HPeXT/IWuP+SpHLN8lEF6oPLasCSye/a/qMZpg/lhBINdq8y8dGW9hRfKrRAdGCs196LuoAlsQnC7I1Q=
+  file: thermal-vision-${TRAVIS_TAG}-${TARGET}
+  on:
+    repo: IoTPanic/thermal-vision
+  skip_cleanup: 'true'
 branches:
   only:
-    # Pushes and PR to the master branch
-    - master
-    # Ruby regex to match tags.
-    # Required, or travis won't trigger deploys when a new tag is pushed.
-    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
-    
+  - master
+  - "/^v\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
 notifications:
   email:
     on_success: never
