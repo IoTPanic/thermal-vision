@@ -169,8 +169,8 @@ fn main() {
     let opengl = OpenGL::V3_2;
     let args: Vec<String> = env::args().collect();
 
-    if args.len() < 2{
-        println!("Please include a filename!");
+    if args.len() < 3{
+        println!("Please include a filename and cutoff");
         std::process::exit(1);
     }
 
