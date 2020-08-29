@@ -139,7 +139,7 @@ fn read(filename: &String, line_num: i32) -> ([[f32; 8]; 8], bool) {
     return (result, false);
 }
 
-fn getMaxValue(filename: &String) -> f32 {
+fn getMaxValue(filename: &String, cutoff: f32) -> f32 {
     let mut r = 0.0;
 
     let mut line = 0;
@@ -152,8 +152,8 @@ fn getMaxValue(filename: &String) -> f32 {
             for x in 0..8 {
                 if values[y][x] >  r {
                     r = values[y][x];
-                    if r > 1200.0 {
-                        r = 1200.0;
+                    if r > cutoff {
+                        return r;
                     }
                 }
             }
@@ -169,18 +169,17 @@ fn main() {
     let opengl = OpenGL::V3_2;
     let args: Vec<String> = env::args().collect();
 
-    if args.len() == 1{
+    if args.len() < 2{
         println!("Please include a filename!");
         std::process::exit(1);
     }
 
     let filename = &args[1];
 
+    let cutoff = args[2].parse::<f32>().unwrap();
+
     let mut window: Window = WindowSettings::new("Thermal Playback", [600, 600])
-        .graphics_api(opengl)
-        .exit_on_esc(true)
-        .build()
-        .unwrap();
+        .graphics_api(opengl).exit_on_esc(true).build().unwrap();
 
 
     let mut app = App {
@@ -188,7 +187,7 @@ fn main() {
         values: [[0.0; 8]; 8],
         last_updated: 0.0,
         line: 0,
-        max_value: getMaxValue(filename),
+        max_value: getMaxValue(filename, cutoff),
     };
 
     let mut events = Events::new(EventSettings::new());
